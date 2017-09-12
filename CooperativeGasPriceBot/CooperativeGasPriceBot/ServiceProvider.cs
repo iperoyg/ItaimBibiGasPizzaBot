@@ -1,4 +1,5 @@
-﻿using SimpleInjector;
+﻿using CooperativeGasPriceBot.Services;
+using SimpleInjector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,12 @@ namespace CooperativeGasPriceBot
 
         public ServiceProvider()
         {
+            DefaultRegistration();
+        }
 
+        private void DefaultRegistration()
+        {
+            RegisterSingleton<IContactService, ContactService>();
         }
 
         public void RegisterService(Type serviceType, object instance)
