@@ -43,22 +43,23 @@ namespace CooperativeGasPriceBot.Receivers
 
             if (_contactService.IsContactFirstTime(contact))
             {
-                var welcomeMessageResource = await _resource.GetAsync<Document>("$welcome_message", cancellationToken); //$welcome_message
+                var welcomeMessageResource = await _resource.GetAsync<Document>("$welcome_message", cancellationToken);
                 await _sender.SendMessageAsync(welcomeMessageResource, userNode, cancellationToken);
             }
 
-            var mainOptions = new Select
-            {
-                Text = "Escolha uma das opções abaixo:",
-                Scope = SelectScope.Immediate, // QuickReply
-                Options = new SelectOption[2]
-                {
-                    new SelectOption {  Order = 1, Text = "Pesquisar preços", Value = PlainText.Parse("/searchPrice")},
-                    new SelectOption {  Order = 2, Text = "Informar preço", Value = PlainText.Parse("/reportPrice")},
-                }
-            };
+            //var mainOptions = new Select
+            //{
+            //    Text = "Escolha uma das opções abaixo:",
+            //    Scope = SelectScope.Immediate, // QuickReply
+            //    Options = new SelectOption[2]
+            //    {
+            //        new SelectOption {  Order = 1, Text = "Pesquisar preços", Value = PlainText.Parse("/searchPrice")},
+            //        new SelectOption {  Order = 2, Text = "Informar preço", Value = PlainText.Parse("/reportPrice")},
+            //    }
+            //};
 
-            await _sender.SendMessageAsync(mainOptions, userNode, cancellationToken);
+            var menuMessageResource = await _resource.GetAsync<Document>("$menu_message", cancellationToken);
+            await _sender.SendMessageAsync(menuMessageResource, userNode, cancellationToken);
 
         }
 

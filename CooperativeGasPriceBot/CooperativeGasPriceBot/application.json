@@ -28,11 +28,38 @@
     },
     {
       "mediaType": "text/plain",
+      "content": "/end|finalizar",
+      "priority": 5,
+      "response": {
+        "mediaType": "text/plain",
+        "resourceKey": "$end_message"
+      }
+    },
+    {
+      "mediaType": "text/plain",
+      "content": "/menu|menu",
+      "priority": 5,
+      "response": {
+        "mediaType": "text/plain",
+        "resourceKey": "$menu_message"
+      }
+    },
+    {
+      "mediaType": "text/plain",
       "content": "/love/*",
       "priority": 5,
       "response": {
         "mediaType": "text/plain",
         "plainContent": "Favoritar ainda não foi implementado. ;)"
+      }
+    },
+    {
+      "mediaType": "text/plain",
+      "content": "/loveds",
+      "priority": 5,
+      "response": {
+        "mediaType": "text/plain",
+        "plainContent": "A lista de postos favoritos ainda não foi implementada. ;)"
       }
     },
     {
