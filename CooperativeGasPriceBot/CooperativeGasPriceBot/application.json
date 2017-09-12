@@ -15,11 +15,15 @@
       "priority": 1
     },
     {
+      "type": "LocationMessageReceiver",
+      "mediaType": "application/vnd.lime.location\\+json",
+      "priority": 1
+    },
+    {
       "type": "BaseMessageReceiver",
       "mediaType": "text/plain",
       "priority": 10
     }
-
   ],
   "settings": {
     "setting1": "value1"
