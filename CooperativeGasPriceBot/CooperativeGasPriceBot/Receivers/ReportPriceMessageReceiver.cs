@@ -1,4 +1,6 @@
-﻿using Lime.Messaging.Contents;
+﻿using CooperativeGasPriceBot.Models;
+using CooperativeGasPriceBot.Services;
+using Lime.Messaging.Contents;
 using Lime.Protocol;
 using System;
 using System.Collections.Generic;
@@ -15,16 +17,20 @@ namespace CooperativeGasPriceBot.Receivers
     public class ReportPriceMessageReceiver : IMessageReceiver
     {
         private readonly IMessagingHubSender _sender;
+        private readonly IUserContextService _userContextService;
 
         public ReportPriceMessageReceiver(
-            IMessagingHubSender sender
+            IMessagingHubSender sender,
+            IUserContextService userContextService
             )
         {
             _sender = sender;
+            _userContextService = userContextService;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
+            var userNode = envelope.From.ToIdentity();
             var input = new Input
             {
                 Validation = new InputValidation
@@ -37,7 +43,12 @@ namespace CooperativeGasPriceBot.Receivers
                     Value = PlainText.Parse("Certo... Para reportar um preço próximo de vc, informe sua localização.")
                 }
             };
-            await _sender.SendMessageAsync(input, envelope.From, cancellationToken);
+            await _sender.SendMessageAsync(input, userNode, cancellationToken);
+
+            var context = await _userContextService.GetContextAsync(userNode, cancellationToken);
+            context = context ?? new UserContext();
+            context.CurrentJourney = Journey.Report;
+            await _userContextService.SetContextAsync(context, userNode, cancellationToken);
         }
     }
 }

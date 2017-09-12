@@ -9,22 +9,28 @@ using Takenet.MessagingHub.Client.Listener;
 using Lime.Messaging.Contents;
 using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client;
+using CooperativeGasPriceBot.Models;
+using CooperativeGasPriceBot.Services;
 
 namespace CooperativeGasPriceBot.Receivers
 {
     public class SearchPriceMessageReceiver : IMessageReceiver
     {
         private readonly IMessagingHubSender _sender;
+        private readonly IUserContextService _userContextService;
 
         public SearchPriceMessageReceiver(
-            IMessagingHubSender sender
+            IMessagingHubSender sender,
+            IUserContextService userContextService
             )
         {
             _sender = sender;
+            _userContextService = userContextService;
         }
 
         public async  Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
+            var userNode = envelope.From.ToIdentity();
             var input = new Input
             {
                 Validation = new InputValidation
@@ -37,7 +43,11 @@ namespace CooperativeGasPriceBot.Receivers
                     Value = PlainText.Parse("Ótimo!\nPara informar os preços próximos à vc, primeiro preciso da sua localização.")
                 }
             };
-            await _sender.SendMessageAsync(input, envelope.From, cancellationToken);
+            await _sender.SendMessageAsync(input, userNode, cancellationToken);
+            var context = await _userContextService.GetContextAsync(userNode, cancellationToken);
+            context = context ?? new UserContext();
+            context.CurrentJourney = Journey.Search;
+            await _userContextService.SetContextAsync(context, userNode, cancellationToken);
         }
     }
 }
