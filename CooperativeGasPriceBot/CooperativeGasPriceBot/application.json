@@ -3,9 +3,23 @@
   "accessKey": "",
   "messageReceivers": [
     {
+      "type": "SearchPriceMessageReceiver",
+      "mediaType": "text/plain",
+      "content": "/searchPrice",
+      "priority": 1
+    },
+    {
+      "type": "ReportPriceMessageReceiver",
+      "mediaType": "text/plain",
+      "content": "/reportPrice",
+      "priority": 1
+    },
+    {
       "type": "BaseMessageReceiver",
-      "mediaType": "text/plain"
+      "mediaType": "text/plain",
+      "priority": 10
     }
+
   ],
   "settings": {
     "setting1": "value1"
