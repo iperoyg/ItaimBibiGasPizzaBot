@@ -27,6 +27,15 @@
       "priority": 5
     },
     {
+      "mediaType": "text/plain",
+      "content": "/love/*",
+      "priority": 5,
+      "response": {
+        "mediaType": "text/plain",
+        "plainContent": "Favoritar ainda não foi implementado. ;)"
+      }
+    },
+    {
       "type": "LocationMessageReceiver",
       "mediaType": "application/vnd.lime.location\\+json",
       "priority": 5
