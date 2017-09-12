@@ -11,5 +11,6 @@ namespace CooperativeGasPriceBot.Services
         Task<List<GasStation>> GetGasStationNearLocationAsync(Location location, CancellationToken cancellationToken, bool withPrice = false);
         Task InitializeAsync(CancellationToken cancellationToken);
         Task UpdateGasStationAsync(GasStation station, CancellationToken cancellationToken);
+        Task<GasStation> GetGasStationByIdAsync(int id, CancellationToken cancellationToken);
     }
 }

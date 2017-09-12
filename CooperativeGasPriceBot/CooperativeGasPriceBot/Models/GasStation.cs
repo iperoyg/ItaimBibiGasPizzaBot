@@ -14,6 +14,8 @@ namespace CooperativeGasPriceBot.Models
         public static MediaType MEDIA_TYPE = MediaType.Parse("application/coopgaspricebot.gasstation+json");
 
         [DataMember]
+        public int Id { get; set; }
+        [DataMember]
         public decimal ActualPrice { get; set; }
         [DataMember]
         public string Name { get; set; }

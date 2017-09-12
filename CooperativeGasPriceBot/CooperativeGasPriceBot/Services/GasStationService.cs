@@ -28,11 +28,11 @@ namespace CooperativeGasPriceBot.Services
         {
             var stations = new List<GasStation>
             {
-                new GasStation { ActualPrice = default(decimal), Address = "Rua Lorem, 1 - Bairro A", Name = "Posto Bonito", PhotoUri = "http://0mn.io/Content/ia4xn"},
-                new GasStation { ActualPrice = default(decimal), Address = "Rua Ipsum, 2 - Bairro B", Name = "Posto Amarelo", PhotoUri = "http://0mn.io/Content/ia4xn"},
-                new GasStation { ActualPrice = default(decimal), Address = "Rua Neque, 3 - Bairro C", Name = "Posto Vegano", PhotoUri = "http://0mn.io/Content/ia4xn"},
-                new GasStation { ActualPrice = default(decimal), Address = "Rua Quisquam, 4 - Bairro D", Name = "Posto d'Cima", PhotoUri = "http://0mn.io/Content/ia4xn"},
-                new GasStation { ActualPrice = default(decimal), Address = "Rua Dolorem, 5 - Bairro E", Name = "Posto Invertido", PhotoUri = "http://0mn.io/Content/ia4xn"}
+                new GasStation { Id = 1, ActualPrice = default(decimal), Address = "Rua Lorem, 1 - Bairro A", Name = "Posto Bonito", PhotoUri = "http://0mn.io/Content/ia4xn"},
+                new GasStation { Id = 5, ActualPrice = default(decimal), Address = "Rua Ipsum, 2 - Bairro B", Name = "Posto Amarelo", PhotoUri = "http://0mn.io/Content/ia4xn"},
+                new GasStation { Id = 2, ActualPrice = default(decimal), Address = "Rua Neque, 3 - Bairro C", Name = "Posto Vegano", PhotoUri = "http://0mn.io/Content/ia4xn"},
+                new GasStation { Id = 3, ActualPrice = default(decimal), Address = "Rua Quisquam, 4 - Bairro D", Name = "Posto d'Cima", PhotoUri = "http://0mn.io/Content/ia4xn"},
+                new GasStation { Id = 4, ActualPrice = default(decimal), Address = "Rua Dolorem, 5 - Bairro E", Name = "Posto Invertido", PhotoUri = "http://0mn.io/Content/ia4xn"}
             };
             await SetAllAsync(stations, cancellationToken);
         }
@@ -48,7 +48,7 @@ namespace CooperativeGasPriceBot.Services
         public async Task UpdateGasStationAsync(GasStation station, CancellationToken cancellationToken)
         {
             var stations = await GetAllAsync(cancellationToken);
-            var targetStation = stations.FirstOrDefault(s => s.Name == station.Name);
+            var targetStation = stations.FirstOrDefault(s => s.Id == station.Id);
             targetStation.ActualPrice = station.ActualPrice;
             await SetAllAsync(stations, cancellationToken);
         }
@@ -71,5 +71,11 @@ namespace CooperativeGasPriceBot.Services
             return gasStations;
         }
 
+        public async Task<GasStation> GetGasStationByIdAsync(int id, CancellationToken cancellationToken)
+        {
+            var stations = await GetAllAsync(cancellationToken);
+            var targetStation = stations.FirstOrDefault(s => s.Id == id);
+            return targetStation;
+        }
     }
 }

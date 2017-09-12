@@ -15,6 +15,12 @@
       "priority": 1
     },
     {
+      "type": "PriceSetMessageReceiver",
+      "mediaType": "text/plain",
+      "content": "/priceset/*",
+      "priority": 1
+    },
+    {
       "type": "LocationMessageReceiver",
       "mediaType": "application/vnd.lime.location\\+json",
       "priority": 1
