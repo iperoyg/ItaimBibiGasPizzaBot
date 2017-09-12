@@ -6,6 +6,8 @@ using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client.Listener;
 using System.Diagnostics;
 using System;
+using Lime.Protocol.Serialization;
+using CooperativeGasPriceBot.Models;
 
 namespace CooperativeGasPriceBot
 {
@@ -23,6 +25,9 @@ namespace CooperativeGasPriceBot
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
 			Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
+
+			TypeUtil.RegisterDocument<UserContext>();
+
 			return Task.CompletedTask;
 		}
 	}
