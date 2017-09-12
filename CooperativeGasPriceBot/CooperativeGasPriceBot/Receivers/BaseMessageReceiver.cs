@@ -13,24 +13,22 @@ using Lime.Protocol.Network;
 using CooperativeGasPriceBot.Extensions;
 using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client;
+using CooperativeGasPriceBot.Services;
 
 namespace CooperativeGasPriceBot.Receivers
 {
     public class BaseMessageReceiver : IMessageReceiver
     {
-        private readonly IContactExtension _contact;
-        private readonly IDirectoryExtension _directory;
         private readonly IMessagingHubSender _sender;
+        private readonly IContactService _contactService;
 
         public BaseMessageReceiver(
-            IContactExtension contact,
-            IDirectoryExtension directory,
-            IMessagingHubSender sender
+            IMessagingHubSender sender,
+            IContactService contactService
             )
         {
-            _contact = contact;
-            _directory = directory;
             _sender = sender;
+            _contactService = contactService;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
@@ -51,37 +49,7 @@ namespace CooperativeGasPriceBot.Receivers
 
         private async Task<Contact> GetContact(Identity userNode, CancellationToken cancellationToken)
         {
-            Contact contact = null;
-
-            try
-            {
-                contact = await _contact.GetAsync(userNode, cancellationToken);
-                contact.Extras = contact.Extras ?? new Dictionary<string, string>();
-                if (!contact.Extras.ContainsKey("firstTime"))
-                {
-                    contact.Extras.Add("firstTime", false.ToString());
-                }
-                contact.Extras["firstTime"] = false.ToString();
-            }
-            catch (LimeException ex) when (ex.Reason.Code == ReasonCodes.COMMAND_RESOURCE_NOT_FOUND)
-            {
-                // Contact does not exists
-                // Call directory - BLiP add contact to contact list automatically when you do that
-                var account = await _directory.GetDirectoryAccountAsync(userNode, cancellationToken);
-            }
-
-            if (contact == null)
-            {
-                contact = await _contact.GetAsync(userNode, cancellationToken);
-                contact.Extras = contact.Extras ?? new Dictionary<string, string>();
-                if (!contact.Extras.ContainsKey("firstTime"))
-                {
-                    contact.Extras.Add("firstTime", true.ToString());
-                }
-                contact.Extras["firstTime"] = true.ToString();
-            }
-
-            return contact;
+            return await _contactService.GetContactAsync(userNode, cancellationToken);
         }
     }
 }
