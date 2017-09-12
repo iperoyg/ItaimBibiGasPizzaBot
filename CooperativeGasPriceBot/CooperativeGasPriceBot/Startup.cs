@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System;
 using Lime.Protocol.Serialization;
 using CooperativeGasPriceBot.Models;
+using CooperativeGasPriceBot.Services;
 
 namespace CooperativeGasPriceBot
 {
@@ -15,20 +16,29 @@ namespace CooperativeGasPriceBot
 	{
 		private readonly IMessagingHubSender _sender;
 		private readonly IDictionary<string, object> _settings;
+        private readonly IGasStationService _gasStationService;
 
-		public Startup(IMessagingHubSender sender, IDictionary<string, object> settings)
+        public Startup(
+            IMessagingHubSender sender, 
+            IDictionary<string, object> settings,
+            IGasStationService gasStationService
+            )
 		{
 			_sender = sender;
 			_settings = settings;
-		}
+            _gasStationService = gasStationService;
 
-		public Task StartAsync(CancellationToken cancellationToken)
+        }
+
+		public async Task StartAsync(CancellationToken cancellationToken)
 		{
 			Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
 
 			TypeUtil.RegisterDocument<UserContext>();
+            TypeUtil.RegisterDocument<GasStation>();
 
-			return Task.CompletedTask;
+            await _gasStationService.InitializeAsync(cancellationToken);
+            
 		}
 	}
 }

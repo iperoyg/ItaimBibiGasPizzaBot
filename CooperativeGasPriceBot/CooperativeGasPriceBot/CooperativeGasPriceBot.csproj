@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\LimeContactExtension.cs" />
+    <Compile Include="Models\GasStation.cs" />
     <Compile Include="Models\Journey.cs" />
     <Compile Include="Models\UserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,7 +98,9 @@
     <Compile Include="Receivers\SearchPriceMessageReceiver.cs" />
     <Compile Include="ServiceProvider.cs" />
     <Compile Include="Services\ContactService.cs" />
+    <Compile Include="Services\GasStationService.cs" />
     <Compile Include="Services\IContactService.cs" />
+    <Compile Include="Services\IGasStationService.cs" />
     <Compile Include="Services\IUserContextService.cs" />
     <Compile Include="Services\UserContextService.cs" />
     <Compile Include="Startup.cs" />

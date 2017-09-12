@@ -21,6 +21,7 @@ namespace CooperativeGasPriceBot
         {
             RegisterSingleton<IContactService, ContactService>();
             RegisterSingleton<IUserContextService, UserContextService>();
+            RegisterSingleton<IGasStationService, GasStationService>();
         }
 
         public void RegisterService(Type serviceType, object instance)
