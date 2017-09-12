@@ -30,3 +30,9 @@ presentation/p04
 presentation/p05
 
 	- uso do bucket para criar dados persistentes entre interações
+
+presentation/p06
+
+	- criação de um serviço fake para os postos de gasolina (uso do startup para inicializar dados)
+	- criação de um carrossel com imagens e botões (texto e compartilhar)
+	- uso de state para "prender" um usuário num fluxo
