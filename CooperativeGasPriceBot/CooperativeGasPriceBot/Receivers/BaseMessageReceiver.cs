@@ -36,7 +36,7 @@ namespace CooperativeGasPriceBot.Receivers
             var userNode = envelope.From.ToIdentity();
             var contact = await GetContact(userNode, cancellationToken);
 
-            if (contact.IsContactFirstTime())
+            if (_contactService.IsContactFirstTime(contact))
             {
                 await _sender.SendMessageAsync("Oi! Essa é a primeira vez que vc interage cmg!", userNode, cancellationToken);
             }
