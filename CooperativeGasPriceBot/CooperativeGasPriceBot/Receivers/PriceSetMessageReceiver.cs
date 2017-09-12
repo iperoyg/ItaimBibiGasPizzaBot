@@ -15,19 +15,24 @@ namespace CooperativeGasPriceBot.Receivers
 {
     public class PriceSetMessageReceiver : IMessageReceiver
     {
+        public static string ReceiveStationPriceState = nameof(ReceiveStationPriceState);
+
         private readonly IGasStationService _gasStationService;
         private readonly IMessagingHubSender _sender;
         private readonly IUserContextService _context;
+        private readonly IStateManager _state;
 
         public PriceSetMessageReceiver(
             IGasStationService gasStationService,
             IMessagingHubSender sender,
-            IUserContextService context
+            IUserContextService context,
+            IStateManager state
             )
         {
             _gasStationService = gasStationService;
             _sender = sender;
             _context = context;
+            _state = state;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
@@ -36,8 +41,11 @@ namespace CooperativeGasPriceBot.Receivers
             var tokens = content.Split('/');
             var id = int.Parse(tokens.LastOrDefault());
             var station = await _gasStationService.GetGasStationByIdAsync(id, cancellationToken);
-
+            var context = await _context.GetContextAsync(envelope.From.ToIdentity(), cancellationToken);
+            context.CurrentGasStationId = id;
+            await _context.SetContextAsync(context, envelope.From.ToIdentity(), cancellationToken);
             await _sender.SendMessageAsync($"Informe o preço para o posto: {station.Name}", envelope.From, cancellationToken);
+            await _state.SetStateAsync(envelope.From.ToIdentity(), ReceiveStationPriceState);
         }
     }
 }

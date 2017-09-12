@@ -3,27 +3,33 @@
   "accessKey": "",
   "messageReceivers": [
     {
+      "type": "ReceivePriceSetMessageReceiver",
+      "state": "ReceiveStationPriceState",
+      "mediaType": "text/plain",
+      "priority": 1
+    },
+    {
       "type": "SearchPriceMessageReceiver",
       "mediaType": "text/plain",
       "content": "/searchPrice",
-      "priority": 1
+      "priority": 5
     },
     {
       "type": "ReportPriceMessageReceiver",
       "mediaType": "text/plain",
       "content": "/reportPrice",
-      "priority": 1
+      "priority": 5
     },
     {
       "type": "PriceSetMessageReceiver",
       "mediaType": "text/plain",
       "content": "/priceset/*",
-      "priority": 1
+      "priority": 5
     },
     {
       "type": "LocationMessageReceiver",
       "mediaType": "application/vnd.lime.location\\+json",
-      "priority": 1
+      "priority": 5
     },
     {
       "type": "BaseMessageReceiver",

@@ -95,6 +95,7 @@
     <Compile Include="Receivers\BaseMessageReceiver.cs" />
     <Compile Include="Receivers\LocationMessageReceiver.cs" />
     <Compile Include="Receivers\PriceSetMessageReceiver.cs" />
+    <Compile Include="Receivers\ReceivePriceSetMessageReceiver.cs" />
     <Compile Include="Receivers\ReportPriceMessageReceiver.cs" />
     <Compile Include="Receivers\SearchPriceMessageReceiver.cs" />
     <Compile Include="ServiceProvider.cs" />
