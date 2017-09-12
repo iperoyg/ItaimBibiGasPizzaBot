@@ -14,6 +14,8 @@ using CooperativeGasPriceBot.Extensions;
 using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client;
 using CooperativeGasPriceBot.Services;
+using Takenet.MessagingHub.Client.Extensions.Resource;
+using Lime.Messaging.Contents;
 
 namespace CooperativeGasPriceBot.Receivers
 {
@@ -21,14 +23,17 @@ namespace CooperativeGasPriceBot.Receivers
     {
         private readonly IMessagingHubSender _sender;
         private readonly IContactService _contactService;
+        private readonly IResourceExtension _resource;
 
         public BaseMessageReceiver(
             IMessagingHubSender sender,
-            IContactService contactService
+            IContactService contactService,
+            IResourceExtension resource
             )
         {
             _sender = sender;
             _contactService = contactService;
+            _resource = resource;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
@@ -38,12 +43,22 @@ namespace CooperativeGasPriceBot.Receivers
 
             if (_contactService.IsContactFirstTime(contact))
             {
-                await _sender.SendMessageAsync("Oi! Essa é a primeira vez que vc interage cmg!", userNode, cancellationToken);
+                var welcomeMessageResource = await _resource.GetAsync<Document>("$welcome_message", cancellationToken); //$welcome_message
+                await _sender.SendMessageAsync(welcomeMessageResource, userNode, cancellationToken);
             }
-            else
+
+            var mainOptions = new Select
             {
-                await _sender.SendMessageAsync("Oi! Essa não é a sua primeira vez cmg!", userNode, cancellationToken);
-            }
+                Text = "Escolha uma das opções abaixo:",
+                Scope = SelectScope.Immediate, // QuickReply
+                Options = new SelectOption[2]
+                {
+                    new SelectOption {  Order = 1, Text = "Pesquisar preços", Value = PlainText.Parse("/searchPrice")},
+                    new SelectOption {  Order = 2, Text = "Informar preço", Value = PlainText.Parse("/reportPrice")},
+                }
+            };
+
+            await _sender.SendMessageAsync(mainOptions, userNode, cancellationToken);
 
         }
 
