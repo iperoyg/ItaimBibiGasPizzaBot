@@ -3,7 +3,7 @@
   "accessKey": "",
   "messageReceivers": [
     {
-      "type": "PlainTextMessageReceiver",
+      "type": "BaseMessageReceiver",
       "mediaType": "text/plain"
     }
   ],
