@@ -11,6 +11,7 @@ using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client;
 using CooperativeGasPriceBot.Services;
 using CooperativeGasPriceBot.Models;
+using Takenet.MessagingHub.Client.Extensions.Resource;
 
 namespace CooperativeGasPriceBot.Receivers
 {
@@ -19,16 +20,19 @@ namespace CooperativeGasPriceBot.Receivers
         private readonly IMessagingHubSender _sender;
         private readonly IUserContextService _userContextService;
         private readonly IGasStationService _gasStationService;
+        private readonly IResourceExtension _resource;
 
         public LocationMessageReceiver(
             IMessagingHubSender sender,
             IUserContextService userContextService,
-            IGasStationService gasStationService
+            IGasStationService gasStationService,
+            IResourceExtension resource
             )
         {
             _sender = sender;
             _userContextService = userContextService;
             _gasStationService = gasStationService;
+            _resource = resource;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
@@ -40,6 +44,16 @@ namespace CooperativeGasPriceBot.Receivers
 
             //await _sender.SendMessageAsync($"Localização recebida!\nLat: {location.Latitude};\nLon: {location.Longitude}", userNode, cancellationToken);
 
+            var endMenu = new Select
+            {
+                Scope = SelectScope.Immediate,
+                Text = "Para finalizar, clique no botão baixo. Para voltar ao início, clique em menu.",
+                Options = new SelectOption[]
+                {
+                    new SelectOption { Text = "Finalizar", Value = PlainText.Parse("/end") },
+                    new SelectOption { Text = "Menu", Value = PlainText.Parse("/menu") }
+                }
+            };
 
             switch (context.CurrentJourney)
             {
@@ -48,18 +62,20 @@ namespace CooperativeGasPriceBot.Receivers
                     if (gasStations == null || !gasStations.Any())
                     {
                         await _sender.SendMessageAsync($"Não existem postos com preços informados próximos!", userNode, cancellationToken);
+                        var menu = await _resource.GetAsync<Document>("$menu_message", cancellationToken);
+                        await _sender.SendMessageAsync(menu, userNode, cancellationToken);
                         return;
                     }
                     DocumentCollection carrousel = GetCarrousel(gasStations, context.CurrentJourney);
-                    //await _sender.SendMessageAsync($"Abaixo, no futuro, será possível ver os postos de gasolina mais próximos, com o preço informado.", userNode, cancellationToken);
                     await _sender.SendMessageAsync(carrousel, userNode, cancellationToken);
+                    await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
 
                     break;
                 case Models.Journey.Report:
                     var gasStations2 = await _gasStationService.GetGasStationNearLocationAsync(location, cancellationToken, withPrice: false);
                     DocumentCollection carrousel2 = GetCarrousel(gasStations2, context.CurrentJourney);
-                    //await _sender.SendMessageAsync($"Abaixo, no futuro, será possível entrar com o nome do posto e o preço!", userNode, cancellationToken);
                     await _sender.SendMessageAsync(carrousel2, userNode, cancellationToken);
+                    await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
                     break;
                 default:
                     await _sender.SendMessageAsync($"Something is wrong here!!!", userNode, cancellationToken);

@@ -41,13 +41,17 @@ namespace CooperativeGasPriceBot.Receivers
             var endMenu = new Select
             {
                 Scope = SelectScope.Immediate,
-                Text = "Para finalizar, clique no botão baixo. Envie 'oi' para ver outras opções",
-                Options = new SelectOption[] { new SelectOption { Text = "Finalizar", Value = PlainText.Parse("/end") } }
+                Text = "Para finalizar, clique no botão baixo. Para voltar ao início, clique em menu.",
+                Options = new SelectOption[]
+                {
+                    new SelectOption { Text = "Finalizar", Value = PlainText.Parse("/end") },
+                    new SelectOption { Text = "Menu", Value = PlainText.Parse("/menu") }
+                }
             };
             try
             {
                 var content = (envelope.Content as PlainText).Text;
-                if(content == "/stop")
+                if (content == "/stop")
                 {
                     await _sender.SendMessageAsync("Atualização de preço encerrada!", userNode, cancellationToken);
                     await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);

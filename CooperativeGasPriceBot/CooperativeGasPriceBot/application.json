@@ -28,7 +28,7 @@
     },
     {
       "mediaType": "text/plain",
-      "content": "/end|finalizar",
+      "content": "/end$|finalizar$",
       "priority": 5,
       "response": {
         "mediaType": "text/plain",
@@ -37,16 +37,17 @@
     },
     {
       "mediaType": "text/plain",
-      "content": "/menu|menu",
+      "content": "/menu$|menu$",
       "priority": 5,
       "response": {
         "mediaType": "text/plain",
         "resourceKey": "$menu_message"
+
       }
     },
     {
       "mediaType": "text/plain",
-      "content": "/love/*",
+      "content": "/love/.*",
       "priority": 5,
       "response": {
         "mediaType": "text/plain",
@@ -55,11 +56,20 @@
     },
     {
       "mediaType": "text/plain",
-      "content": "/loveds",
+      "content": "/loveds$",
       "priority": 5,
       "response": {
         "mediaType": "text/plain",
         "plainContent": "A lista de postos favoritos ainda não foi implementada. ;)"
+      }
+    },
+    {
+      "mediaType": "text/plain",
+      "content": "^ajuda$",
+      "priority": 5,
+      "response": {
+        "mediaType": "text/plain",
+        "plainContent": "Texto de ajuda. Envie 'menu' para acessar as opções do menu inicial."
       }
     },
     {
