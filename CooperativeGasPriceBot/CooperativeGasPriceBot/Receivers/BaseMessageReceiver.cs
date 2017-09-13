@@ -25,25 +25,34 @@ namespace CooperativeGasPriceBot.Receivers
         private readonly IContactService _contactService;
         private readonly IResourceExtension _resource;
         private readonly Settings _settings;
+        private readonly IUserContextService _context;
 
         public BaseMessageReceiver(
             IMessagingHubSender sender,
             IContactService contactService,
             IResourceExtension resource,
-            Settings settings
+            Settings settings,
+            IUserContextService context
             )
         {
             _sender = sender;
             _contactService = contactService;
             _resource = resource;
             _settings = settings;
+            _context = context;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
             var userNode = envelope.From.ToIdentity();
             var contact = await GetContact(userNode, cancellationToken);
-
+            var context = await _context.GetContextAsync(userNode, cancellationToken);
+            if (context == null)
+            {
+                context = new Models.UserContext();
+                await _context.SetContextAsync(context, userNode, cancellationToken);
+            }
+            
             if (_contactService.IsContactFirstTime(contact))
             {
                 var welcomeMessageResource = await _resource.GetAsync<Document>(_settings.Resources.Welcome, cancellationToken);

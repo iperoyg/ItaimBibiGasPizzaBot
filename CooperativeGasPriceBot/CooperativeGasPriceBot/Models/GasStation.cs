@@ -28,5 +28,10 @@ namespace CooperativeGasPriceBot.Models
         {
 
         }
+
+        public string GetNameId()
+        {
+            return $"gasstation_{Id}";
+        }
     }
 }

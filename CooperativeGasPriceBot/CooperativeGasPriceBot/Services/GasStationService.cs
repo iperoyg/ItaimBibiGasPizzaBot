@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Takenet.MessagingHub.Client.Extensions.Broadcast;
 using Takenet.MessagingHub.Client.Extensions.Bucket;
 
 namespace CooperativeGasPriceBot.Services
@@ -16,12 +17,15 @@ namespace CooperativeGasPriceBot.Services
         public static string GasStationsKey = nameof(GasStationsKey);
 
         private readonly IBucketExtension _bucket;
+        private readonly IBroadcastExtension _broad;
 
         public GasStationService(
-            IBucketExtension bucket
+            IBucketExtension bucket,
+            IBroadcastExtension broad
             )
         {
             _bucket = bucket;
+            _broad = broad;
         }
 
         public async Task InitializeAsync(CancellationToken cancellationToken)
@@ -40,6 +44,11 @@ namespace CooperativeGasPriceBot.Services
                 new GasStation { Id = 4, ActualPrice = default(decimal), Address = "Rua Dolorem, 5 - Bairro E", Name = "Posto Invertido", PhotoUri = "http://0mn.io/Content/ia4xn"}
             };
             await SetAllAsync(stations, cancellationToken);
+            foreach (var item in stations)
+            {
+                await _broad.CreateDistributionListAsync(item.GetNameId(), cancellationToken);
+            }
+          
         }
 
         public async Task<List<GasStation>> GetGasStationNearLocationAsync(Location location, CancellationToken cancellationToken, bool withPrice = false)

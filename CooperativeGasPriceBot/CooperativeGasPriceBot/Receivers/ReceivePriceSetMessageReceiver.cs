@@ -11,6 +11,7 @@ using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client;
 using CooperativeGasPriceBot.Services;
 using Takenet.MessagingHub.Client.Extensions.Resource;
+using Takenet.MessagingHub.Client.Extensions.Broadcast;
 
 namespace CooperativeGasPriceBot.Receivers
 {
@@ -22,6 +23,7 @@ namespace CooperativeGasPriceBot.Receivers
         private readonly IStateManager _state;
         private readonly IResourceExtension _resource;
         private readonly Settings _settings;
+        private readonly IBroadcastExtension _broad;
 
         public ReceivePriceSetMessageReceiver(
             IMessagingHubSender sender,
@@ -29,7 +31,8 @@ namespace CooperativeGasPriceBot.Receivers
             IUserContextService context,
             IStateManager state,
             IResourceExtension resource,
-            Settings settings
+            Settings settings,
+            IBroadcastExtension broad
             )
         {
             _sender = sender;
@@ -38,6 +41,7 @@ namespace CooperativeGasPriceBot.Receivers
             _state = state;
             _resource = resource;
             _settings = settings;
+            _broad = broad;
         }
 
 
@@ -66,6 +70,9 @@ namespace CooperativeGasPriceBot.Receivers
                 await _sender.SendMessageAsync(priceUpdated, userNode, cancellationToken);
                 await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
                 await _state.ResetStateAsync(userNode);
+
+                await _broad.SendMessageAsync(station.GetNameId(), PlainText.Parse($"Preço do posto: '{station.Name}' atualizado para R$: {station.ActualPrice}"), cancellationToken: cancellationToken);
+
             }
             catch (Exception)
             {

@@ -11,6 +11,7 @@ using CooperativeGasPriceBot.Services;
 using Takenet.MessagingHub.Client.Extensions.Resource;
 using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client;
+using Takenet.MessagingHub.Client.Extensions.Broadcast;
 
 namespace CooperativeGasPriceBot.Receivers
 {
@@ -21,13 +22,15 @@ namespace CooperativeGasPriceBot.Receivers
         private readonly IMessagingHubSender _sender;
         private readonly Settings _settings;
         private readonly IGasStationService _gasStationService;
+        private readonly IBroadcastExtension _broad;
 
         public SetLoveGasStationMessageReceiver(
             IUserContextService context,
             IResourceExtension resource,
             IMessagingHubSender sender,
             Settings settings,
-            IGasStationService gasStationService
+            IGasStationService gasStationService,
+            IBroadcastExtension broad
             )
         {
             _context = context;
@@ -35,6 +38,7 @@ namespace CooperativeGasPriceBot.Receivers
             _sender = sender;
             _settings = settings;
             _gasStationService = gasStationService;
+            _broad = broad;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
@@ -53,11 +57,13 @@ namespace CooperativeGasPriceBot.Receivers
                 context.LovedGasStations.Add(id);
                 context.LovedGasStations = context.LovedGasStations.Distinct().ToList();
                 actionMessage = $"'{station.Name}' adicionado com sucesso à lista de postos favoritos.";
+                await _broad.AddRecipientAsync(station.GetNameId(), userNode, cancellationToken);
             }
             else // action == unlove
             {
                 context.LovedGasStations.RemoveAll(i => i == id);
                 actionMessage = $"'{station.Name}' removido com sucesso de sua lista de postos favoritos.";
+                await _broad.DeleteRecipientAsync(station.GetNameId(), userNode, cancellationToken);
             }
 
             await _context.SetContextAsync(context, userNode, cancellationToken);
