@@ -15,11 +15,17 @@ namespace CooperativeGasPriceBot.Models
 
         [DataMember(Name = "currentJourney")]
         public Journey CurrentJourney { get; set; }
+
         [DataMember(Name = "currentGasStation")]
         public int CurrentGasStationId { get; set; }
+
+        [DataMember(Name = "lovedGasStation")]
+        public List<int> LovedGasStations { get; set; }
+
+
         public UserContext() : base(MEDIA_TYPE)
         {
-
+            LovedGasStations = LovedGasStations ?? new List<int>();
         }
 
     }

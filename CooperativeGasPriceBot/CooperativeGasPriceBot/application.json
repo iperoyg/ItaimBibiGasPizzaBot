@@ -46,13 +46,10 @@
       }
     },
     {
+      "type": "SetLoveGasStationMessageReceiver",
       "mediaType": "text/plain",
       "content": "/love/.*",
-      "priority": 5,
-      "response": {
-        "mediaType": "text/plain",
-        "plainContent": "Favoritar ainda não foi implementado. ;)"
-      }
+      "priority": 5
     },
     {
       "mediaType": "text/plain",

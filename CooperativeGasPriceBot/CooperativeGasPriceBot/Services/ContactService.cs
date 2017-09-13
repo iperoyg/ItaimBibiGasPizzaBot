@@ -15,6 +15,7 @@ namespace CooperativeGasPriceBot.Services
 {
     public class ContactService : IContactService
     {
+        private const string FirstTimeKey = "firstTime";
         private readonly IContactExtension _contact;
         private readonly IDirectoryExtension _directory;
 
@@ -35,11 +36,11 @@ namespace CooperativeGasPriceBot.Services
             {
                 contact = await _contact.GetAsync(identity, cancellationToken);
                 contact.Extras = contact.Extras ?? new Dictionary<string, string>();
-                if (!contact.Extras.ContainsKey("firstTime"))
+                if (!contact.Extras.ContainsKey(FirstTimeKey))
                 {
-                    contact.Extras.Add("firstTime", false.ToString());
+                    contact.Extras.Add(FirstTimeKey, false.ToString());
                 }
-                contact.Extras["firstTime"] = false.ToString();
+                contact.Extras[FirstTimeKey] = false.ToString();
             }
             catch (LimeException ex) when (ex.Reason.Code == ReasonCodes.COMMAND_RESOURCE_NOT_FOUND)
             {
@@ -52,11 +53,11 @@ namespace CooperativeGasPriceBot.Services
             {
                 contact = await _contact.GetAsync(identity, cancellationToken);
                 contact.Extras = contact.Extras ?? new Dictionary<string, string>();
-                if (!contact.Extras.ContainsKey("firstTime"))
+                if (!contact.Extras.ContainsKey(FirstTimeKey))
                 {
-                    contact.Extras.Add("firstTime", true.ToString());
+                    contact.Extras.Add(FirstTimeKey, true.ToString());
                 }
-                contact.Extras["firstTime"] = true.ToString();
+                contact.Extras[FirstTimeKey] = true.ToString();
             }
 
             return contact;
