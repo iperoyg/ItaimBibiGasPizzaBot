@@ -48,7 +48,7 @@
     {
       "type": "SetLoveGasStationMessageReceiver",
       "mediaType": "text/plain",
-      "content": "/love/.*",
+      "content": "/(un)?love/.*",
       "priority": 5
     },
     {
@@ -87,7 +87,8 @@
       "priceUpdated": "$priceUpdated_message",
       "notAPrice": "$notPrice_message",
       "reportPriceLocation": "$reportPrice_locationRequest",
-      "searchPriceLocation": "$searchPrice_locationRequest"
+      "searchPriceLocation": "$searchPrice_locationRequest",
+      "noneLovedStations": "$noneLovedStations_message"
     }
   },
   "settingsType": "Settings",

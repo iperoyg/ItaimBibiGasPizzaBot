@@ -42,13 +42,26 @@ namespace CooperativeGasPriceBot.Receivers
             var userNode = envelope.From.ToIdentity();
             var content = (envelope.Content as PlainText).Text;
             var tokens = content.Split('/');
+            var action = tokens[1];
             var id = int.Parse(tokens.LastOrDefault());
             var station = await _gasStationService.GetGasStationByIdAsync(id, cancellationToken);
             var context = await _context.GetContextAsync(userNode, cancellationToken);
-            context.LovedGasStations.Add(id);
-            context.LovedGasStations = context.LovedGasStations.Distinct().ToList();
+
+            string actionMessage = "";
+            if (action == "love")
+            {
+                context.LovedGasStations.Add(id);
+                context.LovedGasStations = context.LovedGasStations.Distinct().ToList();
+                actionMessage = $"'{station.Name}' adicionado com sucesso à lista de postos favoritos.";
+            }
+            else // action == unlove
+            {
+                context.LovedGasStations.RemoveAll(i => i == id);
+                actionMessage = $"'{station.Name}' removido com sucesso de sua lista de postos favoritos.";
+            }
+
             await _context.SetContextAsync(context, userNode, cancellationToken);
-            await _sender.SendMessageAsync($"'{station.Name}' adicionado com sucesso à lista de postos favoritos.", userNode, cancellationToken);
+            await _sender.SendMessageAsync(actionMessage, userNode, cancellationToken);
             var endMenu = await _resource.GetAsync<Document>(_settings.Resources.EndMenu, cancellationToken);
             await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
         }

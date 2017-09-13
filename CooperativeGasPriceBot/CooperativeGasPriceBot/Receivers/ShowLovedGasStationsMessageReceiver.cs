@@ -41,9 +41,18 @@ namespace CooperativeGasPriceBot.Receivers
         {
             var userNode = envelope.From.ToIdentity();
             var context = await _context.GetContextAsync(userNode, cancellationToken);
-            var stations = await _gasStationService.GetGasStationsByIdListAsync(context.LovedGasStations, cancellationToken);
-            var carrousel = _gasStationService.GetCarrousel(stations, Journey.ListLoved, context);
-            await _sender.SendMessageAsync(carrousel, userNode, cancellationToken);
+            if (context.LovedGasStations.Count == 0)
+            {
+                var nonLoved = await _resource.GetAsync<Document>(_settings.Resources.NoneLovedStations, cancellationToken);
+                await _sender.SendMessageAsync(nonLoved, userNode, cancellationToken);
+            }
+            else
+            {
+                var stations = await _gasStationService.GetGasStationsByIdListAsync(context.LovedGasStations, cancellationToken);
+                var carrousel = _gasStationService.GetCarrousel(stations, Journey.ListLoved, context);
+                await _sender.SendMessageAsync(carrousel, userNode, cancellationToken);
+            }
+
             var endMenu = await _resource.GetAsync<Document>(_settings.Resources.EndMenu, cancellationToken);
             await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
 

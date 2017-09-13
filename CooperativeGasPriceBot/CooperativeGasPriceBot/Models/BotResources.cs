@@ -28,5 +28,7 @@ namespace CooperativeGasPriceBot.Models
         public string ReportPriceLocationRequest { get; internal set; }
         [DataMember(Name = "searchPriceLocation")]
         public string SearchPriceLocationRequest { get; internal set; }
+        [DataMember(Name = "noneLovedStations")]
+        public string NoneLovedStations { get; internal set; }
     }
 }
