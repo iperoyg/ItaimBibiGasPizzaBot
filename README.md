@@ -36,3 +36,7 @@ presentation/p06
 	- criação de um serviço fake para os postos de gasolina (uso do startup para inicializar dados)
 	- criação de um carrossel com imagens e botões (texto e compartilhar)
 	- uso de state para "prender" um usuário num fluxo
+
+presentation/p07
+
+	- uso de recursos e do application.json para dar respostas automáticas sem escrever código
