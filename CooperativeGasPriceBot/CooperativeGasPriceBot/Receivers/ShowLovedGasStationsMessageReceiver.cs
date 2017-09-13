@@ -11,35 +11,31 @@ using Takenet.MessagingHub.Client.Extensions.Resource;
 using Takenet.MessagingHub.Client.Sender;
 using CooperativeGasPriceBot.Models;
 using Takenet.MessagingHub.Client;
+using Takenet.MessagingHub.Client.Extensions.EventTracker;
 
 namespace CooperativeGasPriceBot.Receivers
 {
-    public class ShowLovedGasStationsMessageReceiver : IMessageReceiver
+    public class ShowLovedGasStationsMessageReceiver : BaseMessageReceiver
     {
-        private readonly IUserContextService _context;
         private readonly IGasStationService _gasStationService;
-        private readonly Settings _settings;
-        private readonly IMessagingHubSender _sender;
-        private readonly IResourceExtension _resource;
 
         public ShowLovedGasStationsMessageReceiver(
             IUserContextService context,
             IResourceExtension resource,
             IMessagingHubSender sender,
             Settings settings,
-            IGasStationService gasStationService
-            )
+            IGasStationService gasStationService,
+            IEventTrackExtension track,
+            IContactService contactService
+            ) : base(sender, contactService, resource, context, track, settings)
         {
-            _context = context;
-            _resource = resource;
-            _sender = sender;
-            _settings = settings;
             _gasStationService = gasStationService;
         }
 
-        public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task ProcessAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
             var userNode = envelope.From.ToIdentity();
+            await _track.AddAsync("Habilidades", "Listar favoritos", cancellationToken: cancellationToken, identity: userNode);
             var context = await _context.GetContextAsync(userNode, cancellationToken);
             if (context.LovedGasStations.Count == 0)
             {
@@ -55,7 +51,7 @@ namespace CooperativeGasPriceBot.Receivers
 
             var endMenu = await _resource.GetAsync<Document>(_settings.Resources.EndMenu, cancellationToken);
             await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
-
         }
+        
     }
 }

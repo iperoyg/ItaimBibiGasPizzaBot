@@ -16,23 +16,26 @@ using Takenet.MessagingHub.Client;
 using CooperativeGasPriceBot.Services;
 using Takenet.MessagingHub.Client.Extensions.Resource;
 using Lime.Messaging.Contents;
+using Takenet.MessagingHub.Client.Extensions.EventTracker;
 
 namespace CooperativeGasPriceBot.Receivers
 {
-    public class BaseMessageReceiver : IMessageReceiver
+    public abstract class BaseMessageReceiver : IMessageReceiver
     {
-        private readonly IMessagingHubSender _sender;
-        private readonly IContactService _contactService;
-        private readonly IResourceExtension _resource;
-        private readonly Settings _settings;
-        private readonly IUserContextService _context;
+        protected readonly IMessagingHubSender _sender;
+        protected readonly IContactService _contactService;
+        protected readonly IResourceExtension _resource;
+        protected readonly IUserContextService _context;
+        protected readonly IEventTrackExtension _track;
+        protected readonly Settings _settings;
 
         public BaseMessageReceiver(
             IMessagingHubSender sender,
             IContactService contactService,
             IResourceExtension resource,
-            Settings settings,
-            IUserContextService context
+            IUserContextService context,
+            IEventTrackExtension track,
+            Settings settings
             )
         {
             _sender = sender;
@@ -40,6 +43,7 @@ namespace CooperativeGasPriceBot.Receivers
             _resource = resource;
             _settings = settings;
             _context = context;
+            _track = track;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
@@ -55,14 +59,17 @@ namespace CooperativeGasPriceBot.Receivers
             
             if (_contactService.IsContactFirstTime(contact))
             {
+                await _track.AddAsync("Métricas de Usuários", "Novos usuários", cancellationToken: cancellationToken, identity: userNode);
                 var welcomeMessageResource = await _resource.GetAsync<Document>(_settings.Resources.Welcome, cancellationToken);
                 await _sender.SendMessageAsync(welcomeMessageResource, userNode, cancellationToken);
             }
-            
-            var menuMessageResource = await _resource.GetAsync<Document>(_settings.Resources.Menu, cancellationToken);
-            await _sender.SendMessageAsync(menuMessageResource, userNode, cancellationToken);
 
+            await ProcessAsync(envelope, cancellationToken);
+
+            
         }
+
+        public abstract Task ProcessAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken));
 
         private async Task<Contact> GetContact(Identity userNode, CancellationToken cancellationToken)
         {

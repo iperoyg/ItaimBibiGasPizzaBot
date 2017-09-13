@@ -10,32 +10,33 @@ using Lime.Messaging.Contents;
 using CooperativeGasPriceBot.Services;
 using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client;
+using Takenet.MessagingHub.Client.Extensions.Resource;
+using Takenet.MessagingHub.Client.Extensions.EventTracker;
 
 namespace CooperativeGasPriceBot.Receivers
 {
-    public class PriceSetMessageReceiver : IMessageReceiver
+    public class PriceSetMessageReceiver : BaseMessageReceiver
     {
         public static string ReceiveStationPriceState = nameof(ReceiveStationPriceState);
-
-        private readonly IGasStationService _gasStationService;
-        private readonly IMessagingHubSender _sender;
-        private readonly IUserContextService _context;
         private readonly IStateManager _state;
+        private readonly IGasStationService _gasStationService;
 
         public PriceSetMessageReceiver(
             IGasStationService gasStationService,
             IMessagingHubSender sender,
             IUserContextService context,
-            IStateManager state
-            )
+            IStateManager state,
+            IResourceExtension resource,
+            IContactService contactService,
+            IEventTrackExtension track,
+            Settings settings
+            ) : base(sender, contactService, resource, context, track, settings)
         {
             _gasStationService = gasStationService;
-            _sender = sender;
-            _context = context;
             _state = state;
         }
 
-        public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task ProcessAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
             var content = (envelope.Content as PlainText).Text;
             var tokens = content.Split('/');
@@ -48,5 +49,6 @@ namespace CooperativeGasPriceBot.Receivers
             await _sender.SendMessageAsync($"Informe o preço para o posto: {station.Name}", envelope.From, cancellationToken);
             await _state.SetStateAsync(envelope.From.ToIdentity(), ReceiveStationPriceState);
         }
+        
     }
 }

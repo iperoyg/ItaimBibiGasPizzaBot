@@ -72,7 +72,7 @@
       "priority": 5
     },
     {
-      "type": "BaseMessageReceiver",
+      "type": "PlainTextMessageReceiver",
       "mediaType": "text/plain",
       "priority": 10
     }

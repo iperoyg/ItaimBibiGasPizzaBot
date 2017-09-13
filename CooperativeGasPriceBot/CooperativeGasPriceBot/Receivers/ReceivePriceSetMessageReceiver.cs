@@ -12,17 +12,14 @@ using Takenet.MessagingHub.Client;
 using CooperativeGasPriceBot.Services;
 using Takenet.MessagingHub.Client.Extensions.Resource;
 using Takenet.MessagingHub.Client.Extensions.Broadcast;
+using Takenet.MessagingHub.Client.Extensions.EventTracker;
 
 namespace CooperativeGasPriceBot.Receivers
 {
-    public class ReceivePriceSetMessageReceiver : IMessageReceiver
+    public class ReceivePriceSetMessageReceiver : BaseMessageReceiver
     {
-        private readonly IMessagingHubSender _sender;
         private readonly IGasStationService _gasStationService;
-        private readonly IUserContextService _context;
         private readonly IStateManager _state;
-        private readonly IResourceExtension _resource;
-        private readonly Settings _settings;
         private readonly IBroadcastExtension _broad;
 
         public ReceivePriceSetMessageReceiver(
@@ -32,20 +29,17 @@ namespace CooperativeGasPriceBot.Receivers
             IStateManager state,
             IResourceExtension resource,
             Settings settings,
-            IBroadcastExtension broad
-            )
+            IBroadcastExtension broad,
+            IEventTrackExtension track,
+            IContactService contactService
+            ) : base(sender, contactService, resource, context, track, settings)
         {
-            _sender = sender;
             _gasStationService = gasStationService;
-            _context = context;
             _state = state;
-            _resource = resource;
-            _settings = settings;
             _broad = broad;
         }
 
-
-        public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task ProcessAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
             var userNode = envelope.From.ToIdentity();
             var endMenu = await _resource.GetAsync<Document>(_settings.Resources.EndMenu, cancellationToken);
@@ -65,6 +59,7 @@ namespace CooperativeGasPriceBot.Receivers
                 var station = await _gasStationService.GetGasStationByIdAsync(context.CurrentGasStationId, cancellationToken);
                 station.ActualPrice = price;
                 await _gasStationService.UpdateGasStationAsync(station, cancellationToken);
+                await _track.AddAsync("Habilidades", "Atualizar preço", cancellationToken: cancellationToken, identity: userNode);
 
                 var priceUpdated = await _resource.GetAsync<Document>(_settings.Resources.PriceUpdated, cancellationToken);
                 await _sender.SendMessageAsync(priceUpdated, userNode, cancellationToken);
@@ -81,5 +76,6 @@ namespace CooperativeGasPriceBot.Receivers
             }
 
         }
+        
     }
 }

@@ -9,42 +9,38 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Takenet.MessagingHub.Client;
+using Takenet.MessagingHub.Client.Extensions.EventTracker;
 using Takenet.MessagingHub.Client.Extensions.Resource;
 using Takenet.MessagingHub.Client.Listener;
 using Takenet.MessagingHub.Client.Sender;
 
 namespace CooperativeGasPriceBot.Receivers
 {
-    public class ReportPriceMessageReceiver : IMessageReceiver
+    public class ReportPriceMessageReceiver : BaseMessageReceiver
     {
-        private readonly IMessagingHubSender _sender;
-        private readonly IUserContextService _userContextService;
-        private readonly Settings _settings;
-        private readonly IResourceExtension _resource;
 
         public ReportPriceMessageReceiver(
             IMessagingHubSender sender,
-            IUserContextService userContextService,
+            IUserContextService context,
             Settings settings,
-            IResourceExtension resource
-            )
+            IResourceExtension resource,
+            IEventTrackExtension track,
+            IContactService contactService
+            ) : base(sender, contactService, resource, context, track, settings)
         {
-            _sender = sender;
-            _userContextService = userContextService;
-            _settings = settings;
-            _resource = resource;
         }
 
-        public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task ProcessAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
             var userNode = envelope.From.ToIdentity();
+            await _track.AddAsync("Habilidades", "Informar preço", cancellationToken: cancellationToken, identity: userNode);
             var input = await _resource.GetAsync<Document>(_settings.Resources.ReportPriceLocationRequest, cancellationToken);
             await _sender.SendMessageAsync(input, userNode, cancellationToken);
 
-            var context = await _userContextService.GetContextAsync(userNode, cancellationToken);
+            var context = await _context.GetContextAsync(userNode, cancellationToken);
             context = context ?? new UserContext();
             context.CurrentJourney = Journey.Report;
-            await _userContextService.SetContextAsync(context, userNode, cancellationToken);
+            await _context.SetContextAsync(context, userNode, cancellationToken);
         }
     }
 }
