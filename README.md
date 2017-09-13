@@ -40,3 +40,9 @@ presentation/p06
 presentation/p07
 
 	- uso de recursos e do application.json para dar respostas automáticas sem escrever código
+
+presentation/p08
+
+	- uso de uma classe Settings para puxar configurações genéricas do application.json
+	- uso da listas de distribuição e disparo em massa
+
