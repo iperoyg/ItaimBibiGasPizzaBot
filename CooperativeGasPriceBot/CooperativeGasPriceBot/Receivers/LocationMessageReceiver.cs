@@ -44,16 +44,7 @@ namespace CooperativeGasPriceBot.Receivers
 
             //await _sender.SendMessageAsync($"Localização recebida!\nLat: {location.Latitude};\nLon: {location.Longitude}", userNode, cancellationToken);
 
-            var endMenu = new Select
-            {
-                Scope = SelectScope.Immediate,
-                Text = "Para finalizar, clique no botão baixo. Para voltar ao início, clique em menu.",
-                Options = new SelectOption[]
-                {
-                    new SelectOption { Text = "Finalizar", Value = PlainText.Parse("/end") },
-                    new SelectOption { Text = "Menu", Value = PlainText.Parse("/menu") }
-                }
-            };
+            var endMenu = await _resource.GetAsync<Document>("$endMenu_message", cancellationToken);
 
             switch (context.CurrentJourney)
             {
@@ -61,7 +52,8 @@ namespace CooperativeGasPriceBot.Receivers
                     var gasStations = await _gasStationService.GetGasStationNearLocationAsync(location, cancellationToken, withPrice: true);
                     if (gasStations == null || !gasStations.Any())
                     {
-                        await _sender.SendMessageAsync($"Não existem postos com preços informados próximos!", userNode, cancellationToken);
+                        var notFound = await _resource.GetAsync<Document>("$notFoundStations_message", cancellationToken); ;
+                        await _sender.SendMessageAsync(notFound, userNode, cancellationToken);
                         var menu = await _resource.GetAsync<Document>("$menu_message", cancellationToken);
                         await _sender.SendMessageAsync(menu, userNode, cancellationToken);
                         return;
