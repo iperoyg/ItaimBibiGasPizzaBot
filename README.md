@@ -1,6 +1,6 @@
 # Chatbots - O que comem?
 ## Quero Gasoza
-O nome do projeto é uma brincadeira com a pergunta: "O que chatbots de posto de gasolina comem?". No dia que fiz essa pergunta, um dos primeiros resultados do Google foi relacionado a um posto de gasolina em São Paulo (bairro Itaim Bibi creio) que tinha entrega de pizza em um auto-serviço. [Veja Aqui]{https://economia.uol.com.br/empreendedorismo/noticias/redacao/2014/07/10/maquina-automatica-em-posto-de-gasolina-de-sp-faz-pizza-em-2min30s.htm}
+O nome do projeto é uma brincadeira com a pergunta: "O que chatbots de posto de gasolina comem?". No dia que fiz essa pergunta, um dos primeiros resultados do Google foi relacionado a um posto de gasolina em São Paulo (bairro Itaim Bibi creio) que tinha entrega de pizza em um auto-serviço. [Veja Aqui](https://economia.uol.com.br/empreendedorismo/noticias/redacao/2014/07/10/maquina-automatica-em-posto-de-gasolina-de-sp-faz-pizza-em-2min30s.htm)
 
 ## Descrição
 A ideia do bot é ser um programa cooperativo para registro de preços de postos de gasolina.
