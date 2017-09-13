@@ -52,13 +52,10 @@
       "priority": 5
     },
     {
+      "type": "ShowLovedGasStationsMessageReceiver",
       "mediaType": "text/plain",
       "content": "/loveds$",
-      "priority": 5,
-      "response": {
-        "mediaType": "text/plain",
-        "plainContent": "A lista de postos favoritos ainda não foi implementada. ;)"
-      }
+      "priority": 5
     },
     {
       "mediaType": "text/plain",

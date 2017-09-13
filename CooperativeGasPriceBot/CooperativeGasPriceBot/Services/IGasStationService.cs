@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CooperativeGasPriceBot.Models;
 using Lime.Messaging.Contents;
+using Lime.Protocol;
 
 namespace CooperativeGasPriceBot.Services
 {
@@ -12,5 +13,7 @@ namespace CooperativeGasPriceBot.Services
         Task InitializeAsync(CancellationToken cancellationToken);
         Task UpdateGasStationAsync(GasStation station, CancellationToken cancellationToken);
         Task<GasStation> GetGasStationByIdAsync(int id, CancellationToken cancellationToken);
+        Task<List<GasStation>> GetGasStationsByIdListAsync(List<int> lovedGasStations, CancellationToken cancellationToken);
+        DocumentCollection GetCarrousel(List<GasStation> gasStations, Journey journey, UserContext context);
     }
 }

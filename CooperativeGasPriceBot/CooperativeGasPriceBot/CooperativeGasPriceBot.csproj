@@ -100,6 +100,7 @@
     <Compile Include="Receivers\ReportPriceMessageReceiver.cs" />
     <Compile Include="Receivers\SearchPriceMessageReceiver.cs" />
     <Compile Include="Receivers\SetLoveGasStationMessageReceiver.cs" />
+    <Compile Include="Receivers\ShowLovedGasStationsMessageReceiver.cs" />
     <Compile Include="ServiceProvider.cs" />
     <Compile Include="Services\ContactService.cs" />
     <Compile Include="Services\GasStationService.cs" />
@@ -119,4 +120,5 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions />
 </Project>

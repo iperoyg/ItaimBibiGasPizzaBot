@@ -59,14 +59,14 @@ namespace CooperativeGasPriceBot.Receivers
                         await _sender.SendMessageAsync(menu, userNode, cancellationToken);
                         return;
                     }
-                    DocumentCollection carrousel = GetCarrousel(gasStations, context.CurrentJourney);
+                    DocumentCollection carrousel = _gasStationService.GetCarrousel(gasStations, context.CurrentJourney, context);
                     await _sender.SendMessageAsync(carrousel, userNode, cancellationToken);
                     await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
 
                     break;
                 case Models.Journey.Report:
                     var gasStations2 = await _gasStationService.GetGasStationNearLocationAsync(location, cancellationToken, withPrice: false);
-                    DocumentCollection carrousel2 = GetCarrousel(gasStations2, context.CurrentJourney);
+                    DocumentCollection carrousel2 = _gasStationService.GetCarrousel(gasStations2, context.CurrentJourney, context);
                     await _sender.SendMessageAsync(carrousel2, userNode, cancellationToken);
                     await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
                     break;
@@ -75,66 +75,6 @@ namespace CooperativeGasPriceBot.Receivers
                     break;
             }
         }
-
-        private DocumentCollection GetCarrousel(List<GasStation> gasStations, Journey journey)
-        {
-            var doc = new DocumentCollection
-            {
-                ItemType = DocumentSelect.MediaType,
-                Items = gasStations
-                    .Select(g => new DocumentSelect
-                    {
-                        Header = new DocumentContainer
-                        {
-                            Value = new MediaLink
-                            {
-                                Title = $"{g.Name} - Preço: R$ {g.ActualPrice}",
-                                Text = $"{g.Address}",
-                                Uri = new Uri(g.PhotoUri),
-                                Type = "image/jpeg"
-                            }
-                        },
-                        Options = GetCarrouselOptions(g, journey)
-                    })
-                    .ToArray(),
-                Total = gasStations.Count
-            };
-            return doc;
-        }
-
-        private DocumentSelectOption[] GetCarrouselOptions(GasStation g, Journey journey)
-        {
-            if (journey == Journey.Search)
-            {
-                return new DocumentSelectOption[]
-                {
-                    new DocumentSelectOption
-                    {
-                        Order = 1,
-                        Label = new DocumentContainer { Value = PlainText.Parse("Favoritar") },
-                        Value = new DocumentContainer { Value = PlainText.Parse($"/love/{g.Id}") }
-                    },
-                    new DocumentSelectOption
-                    {
-                        Order = 1,
-                        Label = new DocumentContainer { Value = new WebLink { Uri = new Uri("share:") } },
-                        Value = new DocumentContainer { Value = PlainText.Parse($"/share/{g.Id}") }
-                    },
-                };
-            }
-            if (journey == Journey.Report)
-            {
-                return new DocumentSelectOption[]
-                {
-                    new DocumentSelectOption
-                    {
-                        Order = 1,
-                        Label = new DocumentContainer { Value = PlainText.Parse(g.ActualPrice == default(decimal) ? "Informar" : "Atualizar") },
-                        Value = new DocumentContainer { Value = PlainText.Parse($"/priceset/{g.Id}") }
-                    }
-                };
-            }
-            return null;
-        }
+        
     }
 }

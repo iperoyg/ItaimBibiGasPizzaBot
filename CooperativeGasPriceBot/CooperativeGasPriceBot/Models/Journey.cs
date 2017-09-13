@@ -3,7 +3,8 @@
     public enum Journey
     {
         Search,
-        Report
+        Report,
+        ListLoved
     }
 }
 
