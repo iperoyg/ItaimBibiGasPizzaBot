@@ -84,8 +84,8 @@
     }
   ],
   "settings": {
-    "setting1": "value1"
   },
+  "settingsType": "Settings",
   "startupType": "Startup",
   "serviceProviderType": "ServiceProvider",
   "schemaVersion": 2

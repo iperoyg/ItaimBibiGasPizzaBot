@@ -105,6 +105,7 @@
     <Compile Include="Services\IGasStationService.cs" />
     <Compile Include="Services\IUserContextService.cs" />
     <Compile Include="Services\UserContextService.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
