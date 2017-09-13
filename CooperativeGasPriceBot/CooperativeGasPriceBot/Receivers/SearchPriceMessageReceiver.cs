@@ -11,6 +11,7 @@ using Takenet.MessagingHub.Client.Sender;
 using Takenet.MessagingHub.Client;
 using CooperativeGasPriceBot.Models;
 using CooperativeGasPriceBot.Services;
+using Takenet.MessagingHub.Client.Extensions.Resource;
 
 namespace CooperativeGasPriceBot.Receivers
 {
@@ -18,31 +19,27 @@ namespace CooperativeGasPriceBot.Receivers
     {
         private readonly IMessagingHubSender _sender;
         private readonly IUserContextService _userContextService;
+        private readonly IResourceExtension _resource;
+        private readonly Settings _settings;
 
         public SearchPriceMessageReceiver(
             IMessagingHubSender sender,
-            IUserContextService userContextService
+            IUserContextService userContextService,
+            IResourceExtension resource,
+            Settings settings
             )
         {
             _sender = sender;
             _userContextService = userContextService;
+            _resource = resource;
+            _settings = settings;
         }
 
         public async  Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
             var userNode = envelope.From.ToIdentity();
-            var input = new Input
-            {
-                Validation = new InputValidation
-                {
-                    Rule = InputValidationRule.Type,
-                    Type = Location.MediaType,
-                },
-                Label = new DocumentContainer
-                {
-                    Value = PlainText.Parse("Ótimo!\nPara informar os preços próximos à vc, primeiro preciso da sua localização.")
-                }
-            };
+            var input = await _resource.GetAsync<Document>(_settings.Resources.SearchPriceLocationRequest, cancellationToken);
+            
             await _sender.SendMessageAsync(input, userNode, cancellationToken);
             var context = await _userContextService.GetContextAsync(userNode, cancellationToken);
             context = context ?? new UserContext();

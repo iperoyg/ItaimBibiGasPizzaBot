@@ -24,16 +24,19 @@ namespace CooperativeGasPriceBot.Receivers
         private readonly IMessagingHubSender _sender;
         private readonly IContactService _contactService;
         private readonly IResourceExtension _resource;
+        private readonly Settings _settings;
 
         public BaseMessageReceiver(
             IMessagingHubSender sender,
             IContactService contactService,
-            IResourceExtension resource
+            IResourceExtension resource,
+            Settings settings
             )
         {
             _sender = sender;
             _contactService = contactService;
             _resource = resource;
+            _settings = settings;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
@@ -43,11 +46,11 @@ namespace CooperativeGasPriceBot.Receivers
 
             if (_contactService.IsContactFirstTime(contact))
             {
-                var welcomeMessageResource = await _resource.GetAsync<Document>("$welcome_message", cancellationToken);
+                var welcomeMessageResource = await _resource.GetAsync<Document>(_settings.Resources.Welcome, cancellationToken);
                 await _sender.SendMessageAsync(welcomeMessageResource, userNode, cancellationToken);
             }
             
-            var menuMessageResource = await _resource.GetAsync<Document>("$menu_message", cancellationToken);
+            var menuMessageResource = await _resource.GetAsync<Document>(_settings.Resources.Menu, cancellationToken);
             await _sender.SendMessageAsync(menuMessageResource, userNode, cancellationToken);
 
         }

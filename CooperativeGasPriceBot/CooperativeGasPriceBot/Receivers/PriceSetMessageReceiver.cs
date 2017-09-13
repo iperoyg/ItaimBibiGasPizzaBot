@@ -44,6 +44,7 @@ namespace CooperativeGasPriceBot.Receivers
             var context = await _context.GetContextAsync(envelope.From.ToIdentity(), cancellationToken);
             context.CurrentGasStationId = id;
             await _context.SetContextAsync(context, envelope.From.ToIdentity(), cancellationToken);
+            //TODO: Considerar enviar para o contato o nome da estação atual e passar a msg abaixo para recurso com parâmetro
             await _sender.SendMessageAsync($"Informe o preço para o posto: {station.Name}", envelope.From, cancellationToken);
             await _state.SetStateAsync(envelope.From.ToIdentity(), ReceiveStationPriceState);
         }

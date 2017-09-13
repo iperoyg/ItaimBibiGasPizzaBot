@@ -84,6 +84,17 @@
     }
   ],
   "settings": {
+    "resources": {
+      "welcome": "$welcome_message",
+      "menu": "$menu_message",
+      "endMenu": "$endMenu_message",
+      "notFoundStations": "$notFoundStations_message",
+      "stopSetPrice": "$setPriceStop_message",
+      "priceUpdated": "$priceUpdated_message",
+      "notAPrice": "$notPrice_message",
+      "reportPriceLocation": "$reportPrice_locationRequest",
+      "searchPriceLocation": "$searchPrice_locationRequest"
+    }
   },
   "settingsType": "Settings",
   "startupType": "Startup",

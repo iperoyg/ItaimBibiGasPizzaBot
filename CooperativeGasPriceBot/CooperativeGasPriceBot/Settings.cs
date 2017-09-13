@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CooperativeGasPriceBot.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -10,6 +11,7 @@ namespace CooperativeGasPriceBot
     [DataContract]
     public class Settings
     {
-
+        [DataMember(Name = "resources")]
+        public BotResources Resources { get; set; }
     }
 }

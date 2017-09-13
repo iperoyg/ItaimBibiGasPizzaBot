@@ -21,13 +21,15 @@ namespace CooperativeGasPriceBot.Receivers
         private readonly IUserContextService _context;
         private readonly IStateManager _state;
         private readonly IResourceExtension _resource;
+        private readonly Settings _settings;
 
         public ReceivePriceSetMessageReceiver(
             IMessagingHubSender sender,
             IGasStationService gasStationService,
             IUserContextService context,
             IStateManager state,
-            IResourceExtension resource
+            IResourceExtension resource,
+            Settings settings
             )
         {
             _sender = sender;
@@ -35,19 +37,20 @@ namespace CooperativeGasPriceBot.Receivers
             _context = context;
             _state = state;
             _resource = resource;
+            _settings = settings;
         }
 
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
             var userNode = envelope.From.ToIdentity();
-            var endMenu = await _resource.GetAsync<Document>("$endMenu_message", cancellationToken);
+            var endMenu = await _resource.GetAsync<Document>(_settings.Resources.EndMenu, cancellationToken);
             try
             {
                 var content = (envelope.Content as PlainText).Text;
                 if (content == "/stop")
                 {
-                    var priceStop = await _resource.GetAsync<Document>("$setPriceStop_message", cancellationToken);
+                    var priceStop = await _resource.GetAsync<Document>(_settings.Resources.StopSetPrice, cancellationToken);
                     await _sender.SendMessageAsync(priceStop, userNode, cancellationToken);
                     await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
                     await _state.ResetStateAsync(userNode);
@@ -59,14 +62,14 @@ namespace CooperativeGasPriceBot.Receivers
                 station.ActualPrice = price;
                 await _gasStationService.UpdateGasStationAsync(station, cancellationToken);
 
-                var priceUpdated = await _resource.GetAsync<Document>("$priceUpdated_message", cancellationToken);
+                var priceUpdated = await _resource.GetAsync<Document>(_settings.Resources.PriceUpdated, cancellationToken);
                 await _sender.SendMessageAsync(priceUpdated, userNode, cancellationToken);
                 await _sender.SendMessageAsync(endMenu, userNode, cancellationToken);
                 await _state.ResetStateAsync(userNode);
             }
             catch (Exception)
             {
-                var notAPrice = await _resource.GetAsync<Document>("$notPrice_message", cancellationToken);
+                var notAPrice = await _resource.GetAsync<Document>(_settings.Resources.NotAPrice, cancellationToken);
                 await _sender.SendMessageAsync(notAPrice, userNode, cancellationToken);
             }
 

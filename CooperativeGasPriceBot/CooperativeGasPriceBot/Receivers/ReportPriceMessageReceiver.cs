@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Takenet.MessagingHub.Client;
+using Takenet.MessagingHub.Client.Extensions.Resource;
 using Takenet.MessagingHub.Client.Listener;
 using Takenet.MessagingHub.Client.Sender;
 
@@ -18,31 +19,26 @@ namespace CooperativeGasPriceBot.Receivers
     {
         private readonly IMessagingHubSender _sender;
         private readonly IUserContextService _userContextService;
+        private readonly Settings _settings;
+        private readonly IResourceExtension _resource;
 
         public ReportPriceMessageReceiver(
             IMessagingHubSender sender,
-            IUserContextService userContextService
+            IUserContextService userContextService,
+            Settings settings,
+            IResourceExtension resource
             )
         {
             _sender = sender;
             _userContextService = userContextService;
+            _settings = settings;
+            _resource = resource;
         }
 
         public async Task ReceiveAsync(Message envelope, CancellationToken cancellationToken = default(CancellationToken))
         {
             var userNode = envelope.From.ToIdentity();
-            var input = new Input
-            {
-                Validation = new InputValidation
-                {
-                    Rule = InputValidationRule.Type,
-                    Type = Location.MediaType,
-                },
-                Label = new DocumentContainer
-                {
-                    Value = PlainText.Parse("Certo... Para reportar um preço próximo de vc, informe sua localização.")
-                }
-            };
+            var input = await _resource.GetAsync<Document>(_settings.Resources.ReportPriceLocationRequest, cancellationToken);
             await _sender.SendMessageAsync(input, userNode, cancellationToken);
 
             var context = await _userContextService.GetContextAsync(userNode, cancellationToken);
