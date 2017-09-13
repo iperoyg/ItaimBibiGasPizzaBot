@@ -1,6 +1,10 @@
 # ItaimBibiGasPizzaBot
 
 ## Descrição
+A ideia do bot é ser um programa cooperativo para registro de preços de postos de gasolina.
+O projeto uso postos fakes, pois foi criado para a apresentação no Facebook Developer Circles BH dia 13/09/2017 - Chatbots: O que são? O que comem? Onde habitam?
+
+## Apresentação
 
 presentation/p01
 
@@ -46,3 +50,6 @@ presentation/p08
 	- uso de uma classe Settings para puxar configurações genéricas do application.json
 	- uso da listas de distribuição e disparo em massa
 
+presentation/p09
+
+	- uso de event track para ver uso das habilidades do chatbot

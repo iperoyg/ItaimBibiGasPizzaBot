@@ -11,13 +11,13 @@
     {
       "type": "SearchPriceMessageReceiver",
       "mediaType": "text/plain",
-      "content": "/searchPrice",
+      "content": "(/searchPrice)|(Melhor preço)",
       "priority": 5
     },
     {
       "type": "ReportPriceMessageReceiver",
       "mediaType": "text/plain",
-      "content": "/reportPrice",
+      "content": "(/reportPrice)|(Informar preço)",
       "priority": 5
     },
     {
@@ -54,7 +54,7 @@
     {
       "type": "ShowLovedGasStationsMessageReceiver",
       "mediaType": "text/plain",
-      "content": "/loveds$",
+      "content": "(/loveds$)|(Meus favoritos)",
       "priority": 5
     },
     {
